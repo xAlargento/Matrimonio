@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Libreria per i coriandoli -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     :root {
       --card-locked: rgba(139, 125, 107, 0.85);
@@ -21,38 +23,39 @@
       background-size: cover;
       color: #fff;
       margin: 0;
-      padding: 20px;
+      padding: 30px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       min-height: 100vh;
       box-sizing: border-box;
       overflow-x: hidden;
     }
 
-    /* Titolo Matrimoniale Calligrafico */
+    /* Titolo Matrimoniale Ingrandito */
     h1.wedding-title {
       font-family: 'Great Vibes', cursive;
-      font-size: 4.2rem;
+      font-size: 5.5rem;
       background: linear-gradient(45deg, #fff0c7, #ffb703, #ff4d6d, #ffffff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      filter: drop-shadow(2px 4px 10px rgba(0, 0, 0, 0.9));
+      filter: drop-shadow(3px 5px 12px rgba(0, 0, 0, 0.9));
       text-align: center;
-      margin-top: 10px;
-      margin-bottom: 25px;
-      line-height: 1.2;
+      margin-top: 0;
+      margin-bottom: 35px;
+      line-height: 1.1;
     }
 
-    /* Contenitore Griglia Icone */
+    /* Contenitore Griglia Icone (Upscale Generale) */
     .icons-container {
       display: flex;
       justify-content: space-between;
       width: 100%;
-      max-width: 850px;
-      gap: 30px;
-      margin-top: 30px;
-      min-height: 140px;
+      max-width: 1300px;
+      gap: 45px;
+      margin-top: 20px;
+      min-height: 220px;
       transition: opacity 0.6s ease;
     }
 
@@ -60,31 +63,46 @@
       flex: 1;
       aspect-ratio: 1;
       background-color: var(--card-locked);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 12px;
+      border: 4px solid rgba(255, 255, 255, 0.5);
+      border-radius: 20px;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 2rem;
-      font-weight: bold;
-      color: white;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
       backdrop-filter: blur(4px);
       transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease, background-color 0.4s ease;
       position: relative;
+      overflow: hidden;
+    }
+
+    /* Punto interrogativo gigante */
+    .icon-card .placeholder {
+      font-size: 6.5rem;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.9);
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
+      user-select: none;
     }
 
     .icon-card.unlocked {
       background-color: var(--card-unlocked);
-      color: #fff;
+      cursor: pointer;
     }
 
-    .icon-card .content {
+    .icon-card.unlocked:hover {
+      transform: scale(1.05);
+    }
+
+    /* Immagini che riempiono perfettamente il riquadro */
+    .icon-card .content-img {
       display: none;
-      font-size: 2.5rem;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.3));
     }
 
-    .icon-card.unlocked .content {
+    .icon-card.unlocked .content-img {
       display: block;
     }
 
@@ -92,61 +110,104 @@
       display: none;
     }
 
-    /* Area principale contenuto per animazioni */
+    /* Area principale per animazioni */
     .stage-area {
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
-      max-width: 700px;
-      margin-top: 40px;
+      max-width: 900px;
+      margin-top: 50px;
       position: relative;
     }
 
-    /* Pulsante Finale */
+    /* Pulsante Finale Ingrandito */
     #start-btn {
-      padding: 15px 30px;
-      font-size: 1.2rem;
+      padding: 18px 40px;
+      font-size: 1.5rem;
       font-weight: bold;
       background-color: var(--accent);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
       display: none;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, background-color 0.2s ease;
     }
 
     #start-btn:hover {
-      transform: scale(1.05);
+      transform: scale(1.08);
+      background-color: #e63946;
     }
 
-    /* Area Testo Animazione */
+    /* Area Testi Ingrandita */
     #story-text {
-      font-size: 1.7rem;
-      font-weight: 600;
+      font-size: 2.3rem;
+      font-weight: 700;
       text-align: center;
       color: #ffffff;
-      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
-      min-height: 80px;
+      text-shadow: 2px 3px 10px rgba(0, 0, 0, 0.95);
+      min-height: 100px;
       opacity: 0;
       transition: opacity 0.8s ease-in-out;
-      margin-top: 30px;
+      margin-top: 20px;
+      line-height: 1.3;
     }
 
     #final-message {
-      font-size: 2rem;
-      font-weight: bold;
+      font-size: 2.6rem;
+      font-weight: 800;
       color: #ffe6a7;
-      text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.9);
+      text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.95);
       text-align: center;
       opacity: 0;
       transition: opacity 1s ease-in-out;
-      margin-top: 30px;
+      margin-top: 20px;
+      line-height: 1.3;
     }
 
-    /* Classi di animazione dinamiche */
+    /* Pop-up Modal per lo Zoom Immagini */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(6px);
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .modal-content {
+      max-width: 85%;
+      max-height: 80%;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: #fff;
+      font-size: 3.5rem;
+      font-weight: bold;
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.6); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Classi per animazione tessere */
     .hidden-card {
       opacity: 0;
       transform: scale(0.5);
@@ -154,15 +215,58 @@
 
     .active-card {
       opacity: 1 !important;
-      transform: scale(1.3) translateY(-10px) !important;
+      transform: scale(1.35) translateY(-15px) !important;
       z-index: 10;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.7);
     }
 
     .settled-card {
       opacity: 1 !important;
       transform: scale(1) translateY(0) !important;
       z-index: 1;
+    }
+
+    /* Mobile & Tablet Responsiveness */
+    @media (max-width: 768px) {
+      body {
+        padding: 15px 10px;
+      }
+
+      h1.wedding-title {
+        font-size: 3.2rem;
+        margin-bottom: 20px;
+      }
+
+      .icons-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        width: 100%;
+        max-width: 380px;
+        margin-top: 10px;
+      }
+
+      .icon-card .placeholder {
+        font-size: 4rem;
+      }
+
+      #story-text {
+        font-size: 1.5rem;
+        min-height: 70px;
+      }
+
+      #final-message {
+        font-size: 1.6rem;
+      }
+
+      #start-btn {
+        padding: 14px 28px;
+        font-size: 1.2rem;
+      }
+
+      .active-card {
+        transform: scale(1.15) translateY(-5px) !important;
+      }
     }
   </style>
 </head>
@@ -171,21 +275,21 @@
   <h1 class="wedding-title">Il cammino di Cristian e Cristina</h1>
 
   <div class="icons-container" id="board">
-    <div class="icon-card" id="card-strada">
+    <div class="icon-card" id="card-strada" onclick="openZoom('https://i.imgur.com/nJD31qv.jpeg', 'strada')">
       <span class="placeholder">?</span>
-      <span class="content">🛣️</span>
+      <img src="https://i.imgur.com/nJD31qv.jpeg" alt="Strada" class="content-img">
     </div>
-    <div class="icon-card" id="card-casa">
+    <div class="icon-card" id="card-progresso" onclick="openZoom('https://i.imgur.com/NJYw8hI.png', 'progresso')">
       <span class="placeholder">?</span>
-      <span class="content">🏠</span>
+      <img src="https://i.imgur.com/NJYw8hI.png" alt="Progresso" class="content-img">
     </div>
-    <div class="icon-card" id="card-progresso">
+    <div class="icon-card" id="card-casa" onclick="openZoom('https://i.imgur.com/0FTYPqB.jpeg', 'casa')">
       <span class="placeholder">?</span>
-      <span class="content">📜</span>
+      <img src="https://i.imgur.com/0FTYPqB.jpeg" alt="Casa" class="content-img">
     </div>
-    <div class="icon-card" id="card-anello">
+    <div class="icon-card" id="card-anello" onclick="openZoom('https://i.imgur.com/rUxZ0HX.jpeg', 'anello')">
       <span class="placeholder">?</span>
-      <span class="content">💍</span>
+      <img src="https://i.imgur.com/rUxZ0HX.jpeg" alt="Anello" class="content-img">
     </div>
   </div>
 
@@ -195,10 +299,17 @@
     <div id="final-message">Vi auguriamo tantissima felicità e di poter sempre vincere al gioco della vita! ❤️</div>
   </div>
 
+  <!-- Modal Pop-up per Zoom -->
+  <div id="zoom-modal" class="modal" onclick="closeZoom()">
+    <span class="close-modal">&times;</span>
+    <img id="modal-img" class="modal-content" src="" alt="Zoom Tessera">
+  </div>
+
   <script>
-    const items = ['strada', 'casa', 'progresso', 'anello'];
+    const items = ['strada', 'progresso', 'casa', 'anello'];
+    let isAnimating = false;
     
-    // Controlla l'URL alla ricerca di nuovi sblocchi
+    // Controlla l'URL per nuovi sblocchi
     const urlParams = new URLSearchParams(window.location.search);
     const unlockedItem = urlParams.get('unlock');
 
@@ -206,7 +317,7 @@
       localStorage.setItem('catan_' + unlockedItem, 'true');
     }
 
-    // Aggiorna lo stato visivo delle tessere
+    // Aggiorna stato visivo tessere
     let unlockedCount = 0;
     items.forEach(item => {
       if (localStorage.getItem('catan_' + item) === 'true') {
@@ -223,18 +334,41 @@
     // Passaggi dell'animazione
     const steps = [
       { id: 'card-strada', text: 'Vi siete costruiti la vostra strada passo dopo passo...' },
+      { id: 'card-progresso', text: 'Nonostante tutte le difficoltà continuate a fare progressi...' },
       { id: 'card-casa', text: 'Insieme avete creato un posto da poter chiamare casa...' },
-      { id: 'card-progresso', text: 'E nonostante tutte le difficoltà continuate a fare progressi...' },
-      { id: 'card-anello', text: 'Tutto ciò vi ha portato ad oggi, il primo giorno del resto della vostra vita' }
+      { id: 'card-anello', text: 'Tutto ciò vi ha portato ad oggi, il primo giorno del resto della vostra vita.' }
     ];
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
+    // Funzione lanciacoriandoli
+    function launchConfetti() {
+      const duration = 3.5 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+      }, 250);
+    }
+
+    function randomInRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
     async function startAnimation() {
+      isAnimating = true;
       const startBtn = document.getElementById('start-btn');
       const textElem = document.getElementById('story-text');
 
-      // Nasconde il pulsante
       startBtn.style.display = 'none';
 
       // 1. Fai sparire tutte e 4 le tessere
@@ -250,30 +384,42 @@
         const step = steps[i];
         const card = document.getElementById(step.id);
 
-        // La tessera appare ingrandita
         card.classList.remove('hidden-card');
         card.classList.add('active-card');
         await delay(600);
 
-        // Appare la scritta dedicata
         textElem.innerText = step.text;
         textElem.style.opacity = '1';
         await delay(3800);
 
-        // La scritta svanisce
         textElem.style.opacity = '0';
         await delay(800);
 
-        // La tessera si posiziona nello slot della griglia (da sinistra a destra)
         card.classList.remove('active-card');
         card.classList.add('settled-card');
         await delay(600);
       }
 
-      // 3. Quando tutte sono posizionate, appare il messaggio finale
+      // 3. Messaggio finale con coriandoli
       await delay(400);
       const finalMsg = document.getElementById('final-message');
       finalMsg.style.opacity = '1';
+      launchConfetti();
+      isAnimating = false;
+    }
+
+    // Funzione per lo zoom delle immagini al click
+    function openZoom(imgUrl, itemKey) {
+      if (localStorage.getItem('catan_' + itemKey) === 'true' && !isAnimating) {
+        const modal = document.getElementById('zoom-modal');
+        const modalImg = document.getElementById('modal-img');
+        modalImg.src = imgUrl;
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeZoom() {
+      document.getElementById('zoom-modal').style.display = 'none';
     }
   </script>
 </body>
