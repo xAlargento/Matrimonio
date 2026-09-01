@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Il cammino di Cristian e Cristina - Catan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --card-locked: rgba(139, 125, 107, 0.85);
+      --card-unlocked: rgba(212, 163, 115, 0.95);
+      --accent: #d62828;
+    }
+
+    body {
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      /* Sfondo con la tua immagine Imgur */
+      background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), 
+                  url('https://i.imgur.com/JJmmAYM.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    /* Titolo Matrimoniale Calligrafico */
+    h1.wedding-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 4.2rem;
+      background: linear-gradient(45deg, #fff0c7, #ffb703, #ff4d6d, #ffffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(2px 4px 10px rgba(0, 0, 0, 0.9));
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 25px;
+      line-height: 1.2;
+    }
+
+    /* Griglia Icone (Aumentata la distanza con gap: 24px) */
+    .icons-container {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 850px;
+      gap: 24px;
+      margin-top: 30px;
+    }
+
+    .icon-card {
+      flex: 1;
+      aspect-ratio: 1;
+      background-color: var(--card-locked);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      backdrop-filter: blur(4px);
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.4s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .icon-card.unlocked {
+      background-color: var(--card-unlocked);
+      color: #fff;
+    }
+
+    .icon-card .content {
+      display: none;
+      font-size: 2.5rem;
+    }
+
+    .icon-card.unlocked .content {
+      display: block;
+    }
+
+    .icon-card.unlocked .placeholder {
+      display: none;
+    }
+
+    /* Area principale contenuto per animazioni */
+    .stage-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 700px;
+      margin-top: 60px;
+    }
+
+    /* Pulsante Finale */
+    #start-btn {
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      display: none;
+      transition: transform 0.2s ease;
+    }
+
+    #start-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* Area Testo Animazione */
+    #story-text {
+      font-size: 1.6rem;
+      font-weight: 600;
+      text-align: center;
+      color: #ffffff;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);
+      min-height: 80px;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+      margin-top: 40px;
+    }
+
+    #final-message {
+      font-size: 1.9rem;
+      font-weight: bold;
+      color: #ffe6a7;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+      text-align: center;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      margin-top: 20px;
+    }
+
+    /* Animazione: Spostamento tessera verso l'alto senza coprire il testo sotto */
+    .focus-stage {
+      transform: translateY(-20px) scale(1.3);
+      z-index: 10;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="wedding-title">Il cammino di Cristian e Cristina</h1>
+
+  <div class="icons-container" id="board">
+    <div class="icon-card" id="card-strada">
+      <span class="placeholder">?</span>
+      <span class="content">🛣️</span>
+    </div>
+    <div class="icon-card" id="card-casa">
+      <span class="placeholder">?</span>
+      <span class="content">🏠</span>
+    </div>
+    <div class="icon-card" id="card-progresso">
+      <span class="placeholder">?</span>
+      <span class="content">📜</span>
+    </div>
+    <div class="icon-card" id="card-anello">
+      <span class="placeholder">?</span>
+      <span class="content">💍</span>
+    </div>
+  </div>
+
+  <div class="stage-area">
+    <button id="start-btn" onclick="startAnimation()">Inizia il Viaggio ❤️</button>
+    <div id="story-text"></div>
+    <div id="final-message">Vi auguriamo tantissima felicità e di poter sempre vincere al gioco della vita! ❤️</div>
+  </div>
+
+  <script>
+    const items = ['strada', 'casa', 'progresso', 'anello'];
+    
+    // Controlla l'URL alla ricerca di nuovi sblocchi
+    const urlParams = new URLSearchParams(window.location.search);
+    const unlockedItem = urlParams.get('unlock');
+
+    if (unlockedItem && items.includes(unlockedItem)) {
+      localStorage.setItem('catan_' + unlockedItem, 'true');
+    }
+
+    // Aggiorna lo stato visivo delle tessere
+    let unlockedCount = 0;
+    items.forEach(item => {
+      if (localStorage.getItem('catan_' + item) === 'true') {
+        document.getElementById('card-' + item).classList.add('unlocked');
+        unlockedCount++;
+      }
+    });
+
+    // Mostra il pulsante se tutte le tessere sono sbloccate
+    if (unlockedCount === 4) {
+      document.getElementById('start-btn').style.display = 'block';
+    }
+
+    // Passaggi dell'animazione
+    const steps = [
+      { id: 'card-strada', text: 'Vi siete costruiti la vostra strada passo dopo passo...' },
+      { id: 'card-casa', text: 'Insieme avete creato un posto da poter chiamare casa...' },
+      { id: 'card-progresso', text: 'E nonostante tutte le difficoltà continuate a fare progressi...' },
+      { id: 'card-anello', text: 'Tutto ciò vi ha portato ad oggi, il primo giorno del resto della vostra vita' }
+    ];
+
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+
+    async function startAnimation() {
+      document.getElementById('start-btn').style.display = 'none';
+      const textElem = document.getElementById('story-text');
+
+      for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+        const card = document.getElementById(step.id);
+
+        // 1. Ingrandisce e solleva la tessera
+        card.classList.add('focus-stage');
+        await delay(600);
+
+        // 2. Mostra il testo sottostante
+        textElem.innerText = step.text;
+        textElem.style.opacity = '1';
+        await delay(3500);
+
+        // 3. Nasconde il testo
+        textElem.style.opacity = '0';
+        await delay(800);
+
+        // 4. Riporta la tessera nella griglia
+        card.classList.remove('focus-stage');
+        await delay(600);
+      }
+
+      // Mostra il messaggio finale
+      const finalMsg = document.getElementById('final-message');
+      finalMsg.style.opacity = '1';
+    }
+  </script>
+</body>
+</html>
